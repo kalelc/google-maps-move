@@ -5,6 +5,7 @@ var BaseMap = {
     _this.initialize();
   },
   google_maps: function(){
+    this.markers = [];
     this.mapOptions = {
       zoom: 8,
       mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -43,16 +44,32 @@ var BaseMap = {
       label: "Marker 2"
     });
 
+    this.markers.push(marker1);
+    this.markers.push(marker2);
+
     var distance = this.distance_between([position1.lat(),position1.lng()], [position2.lat(),position2.lng()]);
-    var iterate = (Math.floor(distance);
+    var iterate = Math.floor(distance);
 
     var new_position = new google.maps.geometry.spherical.computeOffset(position1, 1, google.maps.geometry.spherical.computeHeading(position1, position2));
-
     var marker1meter = new google.maps.Marker({
       position: new_position,
       map: map,
       label: "new position"
     });
+    this.timeout_position(0, iterate);
+  },
+  timeout_position: function(index, limit) {
+    var _this = this;
+    var start = _this.markers[0].getPosition();
+    var end = _this.markers[1].getPosition();
 
+    if(index < limit) {
+      setTimeout(function(){
+        var new_position = new google.maps.geometry.spherical.computeOffset(start, 1, google.maps.geometry.spherical.computeHeading(start, end));
+        _this.markers[0].setPosition(new_position);
+        index++;
+        _this.timeout_position(index, limit);
+      }, 1000);
+    }
   }
 };
