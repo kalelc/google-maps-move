@@ -30,9 +30,9 @@ var BaseMap = {
     var map = this.map;
 
     var request = {
-      origin: new google.maps.LatLng("-33.50711", "-70.720932"),
-      destination: new google.maps.LatLng("-33.508334", "-70.721624"),
-      waypoints: [{ location: new google.maps.LatLng("-33.507209", "-70.721032")}],
+      origin: new google.maps.LatLng("-33.4228096", "-70.6089065"),
+      destination: new google.maps.LatLng("-33.4228185", "-70.6055966"),
+      waypoints: [{ location: new google.maps.LatLng("-33.4227335", "-70.607383")}],
       travelMode: google.maps.TravelMode.DRIVING,
       provideRouteAlternatives: false
     };
@@ -44,13 +44,41 @@ var BaseMap = {
     directionsService.route(request, function(result, status) {
       if (status == google.maps.DirectionsStatus.OK) {
         directionsDisplay.setDirections(result);
+        var positions = _this.decode_polyline(result.routes[0].overview_polyline);
+        _this.move_marker(positions, 0);
       } else {
         alert("Esta dirección no existe " + status);
       }
     });
   },
+  move_marker: function(positions, index) {
+    var _this = this;
+    var marker = _this.markers[0];
+    var size = positions.length;
 
-  decodePolyline: function(str, precision) {
+    if (index == 0) {
+      var marker = new google.maps.Marker({
+        position: {lat: positions[0][0], lng: positions[0][1]},
+        map: _this.map
+      });
+      _this.markers.push(marker);
+    }
+
+    if(index < size) {
+      var distance = 1;
+
+      if (index > 0){
+        distance = Math.floor(_this.distance_between(positions[index - 1], positions[index]));
+      }
+
+      setTimeout(function(){
+        marker.setPosition(new google.maps.LatLng(positions[index][0],positions[index][1]));
+        index++;
+        _this.move_marker(positions, index);
+      }, 1000);
+    }
+  },
+  decode_polyline: function(str, precision) {
     var index = 0,
     lat = 0,
     lng = 0,
@@ -92,18 +120,4 @@ var BaseMap = {
     }
     return coordinates;
   },
-  timeout_position: function(index, limit) {
-    var _this = this;
-    var start = _this.markers[0].getPosition();
-    var end = _this.markers[1].getPosition();
-
-    if(index < limit) {
-      setTimeout(function(){
-        var new_position = new google.maps.geometry.spherical.computeOffset(start, 1, google.maps.geometry.spherical.computeHeading(start, end));
-        _this.markers[0].setPosition(new_position);
-        index++;
-        _this.timeout_position(index, limit);
-      }, 1000);
-    }
-  }
 };
