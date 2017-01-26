@@ -26,37 +26,28 @@ var BaseMap = {
     return rm * c;
   },
   initialize: function() {
+    var _this = this;
     var map = this.map;
-    var position1 = new google.maps.LatLng(-33.50694, -70.72127);
-    var position2 = new google.maps.LatLng(-33.50684, -70.72111);
-    var bounds = new google.maps.LatLngBounds();
-    bounds.extend(position1);
-    bounds.extend(position2);
-    map.fitBounds(bounds);
-    var marker1 = new google.maps.Marker({
-      position: position1,
-      map: map,
-      label: "Marker 1"
-    });
-    var marker2 = new google.maps.Marker({
-      position: position2,
-      map: map,
-      label: "Marker 2"
-    });
 
-    this.markers.push(marker1);
-    this.markers.push(marker2);
+    var request = {
+      origin: new google.maps.LatLng("-33.50711", "-70.720932"),
+      destination: new google.maps.LatLng("-33.508334", "-70.721624"),
+      waypoints: [{ location: new google.maps.LatLng("-33.507209", "-70.721032")}],
+      travelMode: google.maps.TravelMode.DRIVING,
+      provideRouteAlternatives: false
+    };
 
-    var distance = this.distance_between([position1.lat(),position1.lng()], [position2.lat(),position2.lng()]);
-    var iterate = Math.floor(distance);
+    var directionsService = new google.maps.DirectionsService();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);
 
-    var new_position = new google.maps.geometry.spherical.computeOffset(position1, 1, google.maps.geometry.spherical.computeHeading(position1, position2));
-    var marker1meter = new google.maps.Marker({
-      position: new_position,
-      map: map,
-      label: "new position"
+    directionsService.route(request, function(result, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        directionsDisplay.setDirections(result);
+      } else {
+        alert("Esta dirección no existe " + status);
+      }
     });
-    this.timeout_position(0, iterate);
   },
   timeout_position: function(index, limit) {
     var _this = this;
