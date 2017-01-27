@@ -72,7 +72,8 @@ var BaseMap = {
       }
 
       setTimeout(function(){
-        marker.setPosition(new google.maps.LatLng(positions[index][0],positions[index][1]));
+        var options = { duration: 1000, easing: 'linear' };
+        marker.setPositionAnimated(new google.maps.LatLng(positions[index][0],positions[index][1]), options, function(finished){});
         index++;
         _this.move_marker(positions, index);
       }, 1000);
