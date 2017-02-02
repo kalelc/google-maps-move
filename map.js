@@ -31,7 +31,7 @@ var BaseMap = {
 
     var request = {
       origin: new google.maps.LatLng("-33.4228096", "-70.6089065"),
-      destination: new google.maps.LatLng("-33.4228185", "-70.6055966"),
+      destination: new google.maps.LatLng("-33.428941", "-70.6014"),
       waypoints: [{ location: new google.maps.LatLng("-33.4227335", "-70.607383")}],
       travelMode: google.maps.TravelMode.DRIVING,
       provideRouteAlternatives: false
@@ -72,11 +72,11 @@ var BaseMap = {
       }
 
       setTimeout(function(){
-        var options = { duration: 1000, easing: 'linear' };
+        var options = { duration: 5000, easing: 'linear' };
         marker.setPositionAnimated(new google.maps.LatLng(positions[index][0],positions[index][1]), options, function(finished){});
         index++;
         _this.move_marker(positions, index);
-      }, 1000);
+      }, 5000);
     }
   },
   decode_polyline: function(str, precision) {
