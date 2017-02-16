@@ -55,6 +55,7 @@ var BaseMap = {
     var _this = this;
     var marker = _this.markers[0];
     var size = positions.length;
+    var distance = 1000;
 
     if (index == 0) {
       var marker = new google.maps.Marker({
@@ -65,18 +66,12 @@ var BaseMap = {
     }
 
     if(index < size) {
-      var distance = 1;
-
-      if (index > 0){
-        distance = Math.floor(_this.distance_between(positions[index - 1], positions[index]));
-      }
-
       setTimeout(function(){
-        var options = { duration: 5000, easing: 'linear' };
+        var options = { duration: distance, easing: 'linear' };
         marker.setPositionAnimated(new google.maps.LatLng(positions[index][0],positions[index][1]), options, function(finished){});
         index++;
         _this.move_marker(positions, index);
-      }, 5000);
+      }, distance);
     }
   },
   decode_polyline: function(str, precision) {
